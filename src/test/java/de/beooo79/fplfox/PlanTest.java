@@ -2,14 +2,15 @@ package de.beooo79.fplfox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import de.beooo79.fplfox.model.bo.flightplan.Airway;
 import de.beooo79.fplfox.model.bo.flightplan.Fix;
 import de.beooo79.fplfox.model.bo.flightplan.Plan;
-import de.beooo79.fplfox.model.bo.flightplan.Segment;
 
 @SpringBootTest
 public class PlanTest {
@@ -25,8 +26,8 @@ public class PlanTest {
     void newPlanHasZeroWaypointsAndDefaultFields() {
         assertEquals(0, plan.size());
         assertEquals("IFPL", plan.getTitle());
-        assertEquals("", plan.getAdep());
-        assertEquals("", plan.getAdes());
+        assertEquals("", plan.getADEP());
+        assertEquals("", plan.getADES());
     }
 
     @Test
@@ -47,4 +48,18 @@ public class PlanTest {
         assertEquals(1, plan.size());
     }
 
+    @Test
+    void aerodromesAndRoute() {
+        plan.setADEP("EDDF");
+        plan.setADEP("SBGR");
+        plan.setRoute(
+                "ANEKI Y163 HERBI Y164 OLBEN UN869 AGN UL866 PPN UN10 VASUM UN857 MIA UW50 SEBTA W8 RDE W45 PETRI");
+        assertTrue(plan.size() > 0);
+        Fix a = new Fix("HERBI");
+        Airway b = new Airway("Y164");
+        assertTrue(plan.contains(a));
+        assertTrue(plan.contains(b));
+        assertTrue(plan.hasSuccessor(a));
+        assertEquals(b, plan.successor(a));
+    }
 }
