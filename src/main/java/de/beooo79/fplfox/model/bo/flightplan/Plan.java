@@ -65,7 +65,10 @@ public class Plan {
     }
 
     public void setRoute(String sequence) {
-        waypoints.add(new Fix(""));
+        String[] split = sequence.split(" ");
+        for (String s : split) {
+            waypoints.add(new Fix(s));
+        }
     }
 
 }

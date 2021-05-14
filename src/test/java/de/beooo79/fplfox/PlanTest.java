@@ -1,6 +1,7 @@
 package de.beooo79.fplfox;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,11 +46,37 @@ public class PlanTest {
         plan.add(new Fix("BAYWA"));
         assertEquals(2, plan.size());
         plan.remove(new Fix("BLAWA"));
-        assertEquals(1, plan.size());
+        plan.remove(new Fix("BLAWA"));
+        assertEquals(0, plan.size());
     }
 
     @Test
-    void aerodromesAndRoute() {
+    void addAndRemoveSegmentsMore() {
+        Fix a = new Fix("GIVMI");
+        Fix b = new Fix("BAYWA");
+        plan.add(a);
+        plan.add(b);
+        plan.remove(a);
+        assertFalse(plan.contains(a));
+        assertTrue(plan.contains(b));
+        plan.add(a);
+        assertTrue(plan.contains(a));
+    }
+
+    @Test
+    void segmentsRelationsShips() {
+        Fix a = new Fix("GIVMI");
+        Fix b = new Fix("BAYWA");
+        plan.add(a);
+        plan.add(b);
+        assertTrue(plan.hasSuccessor(a));
+        assertEquals(b, plan.successor(a));
+        assertFalse(plan.hasSuccessor(b));
+        assertEquals(null, plan.successor(b));
+    }
+
+    @Test
+    void aerodromesAndRouteFinder() {
         plan.setADEP("EDDF");
         plan.setADEP("SBGR");
         plan.setRoute(
