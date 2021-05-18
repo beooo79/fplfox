@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import de.beooo79.fplfox.model.bo.flightplan.Airway;
 import de.beooo79.fplfox.model.bo.flightplan.Fix;
 import de.beooo79.fplfox.model.bo.flightplan.Plan;
+import de.beooo79.fplfox.model.bo.flightplan.RadioBeacon;
 
 @SpringBootTest
 public class PlanTest {
@@ -64,15 +65,27 @@ public class PlanTest {
     }
 
     @Test
-    void segmentsRelationsShips() {
+    void segmentsSuccessor() {
         Fix a = new Fix("GIVMI");
         Fix b = new Fix("BAYWA");
         plan.add(a);
         plan.add(b);
-        assertTrue(plan.hasSuccessor(a));
-        assertEquals(b, plan.successor(a));
-        assertFalse(plan.hasSuccessor(b));
-        assertEquals(null, plan.successor(b));
+        assertTrue(plan.hasNext(a));
+        assertEquals(b, plan.next(a));
+        assertFalse(plan.hasNext(b));
+        assertEquals(null, plan.next(b));
+    }
+
+    @Test
+    void segmentsPredecessor() {
+        Fix a = new Fix("GIVMI");
+        Fix b = new Fix("BAYWA");
+        plan.add(a);
+        plan.add(b);
+        assertFalse(plan.hasPrevious(a));
+        assertEquals(a, plan.previous(b));
+        assertTrue(plan.hasPrevious(b));
+        assertEquals(null, plan.previous(a));
     }
 
     @Test
@@ -84,9 +97,13 @@ public class PlanTest {
         assertTrue(plan.size() > 0);
         Fix a = new Fix("HERBI");
         Airway b = new Airway("Y164");
+        RadioBeacon c = new RadioBeacon("RDE");
         assertTrue(plan.contains(a));
         assertTrue(plan.contains(b));
-        assertTrue(plan.hasSuccessor(a));
-        assertEquals(b, plan.successor(a));
+        assertTrue(plan.contains(c));
+        assertTrue(plan.hasNext(a));
+        assertEquals(b, plan.next(a));
+        assertFalse(plan.hasNext(new Fix("PETRI")));
     }
+
 }

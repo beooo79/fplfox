@@ -1,9 +1,11 @@
 package de.beooo79.fplfox.model.bo.flightplan;
 
-public class Airway extends Segment {
+public class Airway extends DefaultSegment {
 
     public Airway(String name) {
-        this.name = name;
+        super(name);
     }
+
+
 
 }

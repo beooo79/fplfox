@@ -47,7 +47,15 @@ public class Plan {
         return waypoints.contains(segment);
     }
 
-    public boolean hasSuccessor(Fix a) {
+    public boolean hasPrevious(Fix a) {
+        int index = waypoints.lastIndexOf(a);
+        if (index <= 0)
+            return false;
+        else
+            return true;
+    }
+
+    public boolean hasNext(Fix a) {
         int index = waypoints.lastIndexOf(a);
         if (index < 0)
             return false;
@@ -57,8 +65,15 @@ public class Plan {
             return true;
     }
 
-    public Segment successor(Fix a) {
-        if (hasSuccessor(a))
+    public Segment previous(Fix a) {
+        if (hasPrevious(a))
+            return waypoints.get(waypoints.lastIndexOf(a) - 1);
+        else
+            return null;
+    }
+
+    public Segment next(Fix a) {
+        if (hasNext(a))
             return waypoints.get(waypoints.lastIndexOf(a) + 1);
         else
             return null;
@@ -67,7 +82,7 @@ public class Plan {
     public void setRoute(String sequence) {
         String[] split = sequence.split(" ");
         for (String s : split) {
-            waypoints.add(new Fix(s));
+            waypoints.add(SegmentFactory.fromString(s));
         }
     }
 

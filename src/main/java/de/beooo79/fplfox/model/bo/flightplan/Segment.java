@@ -6,7 +6,7 @@ public abstract class Segment {
 
     @Override
     public boolean equals(Object obj) {
-        return obj.getClass().equals(this.getClass()) && obj instanceof Segment
+        return obj != null && obj.getClass().equals(this.getClass()) && obj instanceof Segment
                 && ((Segment) obj).name.equals(this.name);
     }
 }
