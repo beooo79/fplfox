@@ -43,12 +43,16 @@ public class PlanTest {
 
     @Test
     void addAndRemoveSegments() {
+        Fix a = new Fix("GIVMI");
+        Fix b = new Fix("BAYWA");
+
         assertEquals(0, plan.size());
-        plan.add(new Fix("GIVMI"));
-        plan.add(new Fix("BAYWA"));
+        plan.add(a);
+        plan.add(b);
         assertEquals(2, plan.size());
-        plan.remove(new Fix("BLAWA"));
-        plan.remove(new Fix("BLAWA"));
+        plan.remove(a);
+        plan.remove(b);
+        plan.remove(b);
         assertEquals(0, plan.size());
     }
 
@@ -66,7 +70,7 @@ public class PlanTest {
     }
 
     @Test
-    void addAndRemoveSegmentsAfter() {
+    void addSegmentsAfter() {
         Fix a = new Fix("GIVMI");
         Fix b = new Fix("BAYWA");
         Segment c = new RadioBeacon("BAYWA");
@@ -78,6 +82,23 @@ public class PlanTest {
 
         plan.addAfter(a, c);
         assertEquals(c, plan.next(a));
+    }
+
+    @Test
+    void removeSegments() {
+        Fix a = new Fix("GIVMI");
+        Fix b = new Fix("BAYWA");
+        Segment c = new RadioBeacon("BAYWA");
+
+        plan.add(a);
+        plan.add(b);
+        plan.add(c);
+        plan.remove(c);
+        assertEquals(2, plan.size());
+        assertTrue(plan.contains(a));
+        assertTrue(plan.contains(b));
+        assertFalse(plan.contains(c));
+
     }
 
     @Test

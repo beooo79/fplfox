@@ -40,7 +40,7 @@ public class Plan {
     }
 
     public void remove(Segment segment) {
-        waypoints.remove(0);
+        waypoints.remove(segment);
     }
 
     public boolean contains(Segment segment) {
@@ -49,10 +49,7 @@ public class Plan {
 
     public boolean hasPrevious(Segment a) {
         var index = waypoints.lastIndexOf(a);
-        if (index <= 0)
-            return false;
-        else
-            return true;
+        return index > 0;
     }
 
     public boolean hasNext(Segment c) {
