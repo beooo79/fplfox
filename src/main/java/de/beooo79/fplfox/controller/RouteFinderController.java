@@ -2,7 +2,6 @@ package de.beooo79.fplfox.controller;
 
 import java.io.IOException;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +19,8 @@ public class RouteFinderController {
     private final RouteFinderService routeFinderService;
 
     @GetMapping
-    public ResponseEntity<String> getRouteFinderRoute(@RequestParam String ADEP, @RequestParam String ADES)
-            throws IOException {
-        return ResponseEntity.ok(routeFinderService.getRoute(ADEP, ADES));
+    public ResponseEntity<String> getRouteFinderRoute(@RequestParam String aerodromeOfDeparture,
+            @RequestParam String aerodromeOfDestination) throws IOException {
+        return ResponseEntity.ok(routeFinderService.getRoute(aerodromeOfDeparture, aerodromeOfDestination));
     }
 }

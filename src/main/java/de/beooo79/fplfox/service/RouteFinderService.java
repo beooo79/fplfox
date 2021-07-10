@@ -12,25 +12,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class RouteFinderService {
 
-    public String getRoute(String ADEP, String ADES) throws IOException {
+    public String getRoute(String aerodromeOfDeparture, String aerodromeOfDestination) throws IOException {
 
         // Build parameter string
-        String data = "id1=" + ADEP + "&id2=" + ADES
+        var data = "id1=" + aerodromeOfDeparture + "&id2=" + aerodromeOfDestination
                 + "&minalt=FL200&maxalt=FL400&lvl=B&usesid=Y&usestar=Y&rnav=Y&dbid=1206";
 
         // Send the request
-        URL url = new URL("http://rfinder.asalink.net/free/autoroute_rtx.php");
+        var url = new URL("http://rfinder.asalink.net/free/autoroute_rtx.php");
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
-        OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+        var writer = new OutputStreamWriter(conn.getOutputStream());
 
         // write parameters
         writer.write(data);
         writer.flush();
 
         // Get the response
-        StringBuffer answer = new StringBuffer();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        var answer = new StringBuilder();
+        var reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
             answer.append(line);
@@ -38,9 +38,8 @@ public class RouteFinderService {
         writer.close();
         reader.close();
 
-        String route = answer.toString().substring(answer.toString().indexOf("<hr><tt><b>" + ADEP),
-                answer.toString().indexOf(ADES + "</b></tt><hr>")).replaceAll("\\<.*?>", "");
-        return route;
+        return answer.toString().substring(answer.toString().indexOf("<hr><tt><b>" + aerodromeOfDeparture),
+                answer.toString().indexOf(aerodromeOfDestination + "</b></tt><hr>")).replaceAll("[^>]*+", "");
 
     }
 }

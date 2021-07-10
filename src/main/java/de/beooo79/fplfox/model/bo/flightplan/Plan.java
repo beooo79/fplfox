@@ -17,11 +17,11 @@ public class Plan {
     @Builder.Default
     private String title = "IFPL";
     @Builder.Default
-    private String ADEP = "";
+    private String aerodromeOfDeparture = "";
     @Builder.Default
-    private String ADES = "";
+    private String aerodromeOfDestination = "";
     @Builder.Default
-    private List<Segment> waypoints = new LinkedList<Segment>();;
+    private List<Segment> waypoints = new LinkedList<>();
 
     public Integer size() {
         return waypoints.size();
@@ -47,16 +47,16 @@ public class Plan {
         return waypoints.contains(segment);
     }
 
-    public boolean hasPrevious(Fix a) {
-        int index = waypoints.lastIndexOf(a);
+    public boolean hasPrevious(Segment a) {
+        var index = waypoints.lastIndexOf(a);
         if (index <= 0)
             return false;
         else
             return true;
     }
 
-    public boolean hasNext(Fix a) {
-        int index = waypoints.lastIndexOf(a);
+    public boolean hasNext(Segment c) {
+        var index = waypoints.lastIndexOf(c);
         if (index < 0)
             return false;
         if (index == size() - 1)
@@ -65,16 +65,16 @@ public class Plan {
             return true;
     }
 
-    public Segment previous(Fix a) {
+    public Segment previous(Segment a) {
         if (hasPrevious(a))
             return waypoints.get(waypoints.lastIndexOf(a) - 1);
         else
             return null;
     }
 
-    public Segment next(Fix a) {
-        if (hasNext(a))
-            return waypoints.get(waypoints.lastIndexOf(a) + 1);
+    public Segment next(Segment c) {
+        if (hasNext(c))
+            return waypoints.get(waypoints.lastIndexOf(c) + 1);
         else
             return null;
     }
@@ -83,6 +83,16 @@ public class Plan {
         String[] split = sequence.split(" ");
         for (String s : split) {
             waypoints.add(SegmentFactory.fromString(s));
+        }
+    }
+
+    public void addAfter(Segment fix, Segment fixToAdd) {
+        if (waypoints.contains(fix)) {
+            for (var i = 0; i < waypoints.size(); i++) {
+                if (waypoints.get(i) == fix) {
+                    waypoints.add(i + 1, fixToAdd);
+                }
+            }
         }
     }
 

@@ -13,6 +13,7 @@ import de.beooo79.fplfox.model.bo.flightplan.Airway;
 import de.beooo79.fplfox.model.bo.flightplan.Fix;
 import de.beooo79.fplfox.model.bo.flightplan.Plan;
 import de.beooo79.fplfox.model.bo.flightplan.RadioBeacon;
+import de.beooo79.fplfox.model.bo.flightplan.Segment;
 
 @SpringBootTest
 public class PlanTest {
@@ -28,8 +29,8 @@ public class PlanTest {
     void newPlanHasZeroWaypointsAndDefaultFields() {
         assertEquals(0, plan.size());
         assertEquals("IFPL", plan.getTitle());
-        assertEquals("", plan.getADEP());
-        assertEquals("", plan.getADES());
+        assertEquals("", plan.getAerodromeOfDeparture());
+        assertEquals("", plan.getAerodromeOfDestination());
     }
 
     @Test
@@ -65,33 +66,56 @@ public class PlanTest {
     }
 
     @Test
+    void addAndRemoveSegmentsAfter() {
+        Fix a = new Fix("GIVMI");
+        Fix b = new Fix("BAYWA");
+        Segment c = new RadioBeacon("BAYWA");
+
+        plan.add(a);
+        plan.addAfter(a, b);
+        assertTrue(plan.hasNext(a));
+        assertEquals(b, plan.next(a));
+
+        plan.addAfter(a, c);
+        assertEquals(c, plan.next(a));
+    }
+
+    @Test
     void segmentsSuccessor() {
         Fix a = new Fix("GIVMI");
         Fix b = new Fix("BAYWA");
+        Segment c = new RadioBeacon("BAYWA");
         plan.add(a);
         plan.add(b);
+        plan.add(c);
         assertTrue(plan.hasNext(a));
         assertEquals(b, plan.next(a));
-        assertFalse(plan.hasNext(b));
-        assertEquals(null, plan.next(b));
+        assertTrue(plan.hasNext(b));
+        assertEquals(c, plan.next(b));
+        assertFalse(plan.hasNext(c));
+        assertEquals(null, plan.next(c));
     }
 
     @Test
     void segmentsPredecessor() {
         Fix a = new Fix("GIVMI");
         Fix b = new Fix("BAYWA");
+        Segment c = new RadioBeacon("BAYWA");
         plan.add(a);
         plan.add(b);
+        plan.add(c);
         assertFalse(plan.hasPrevious(a));
-        assertEquals(a, plan.previous(b));
-        assertTrue(plan.hasPrevious(b));
         assertEquals(null, plan.previous(a));
+        assertTrue(plan.hasPrevious(b));
+        assertEquals(a, plan.previous(b));
+        assertTrue(plan.hasPrevious(c));
+        assertEquals(b, plan.previous(c));
     }
 
     @Test
     void aerodromesAndRouteFinder() {
-        plan.setADEP("EDDF");
-        plan.setADEP("SBGR");
+        plan.setAerodromeOfDeparture("EDDF");
+        plan.setAerodromeOfDestination("SBGR");
         plan.setRoute(
                 "ANEKI Y163 HERBI Y164 OLBEN UN869 AGN UL866 PPN UN10 VASUM UN857 MIA UW50 SEBTA W8 RDE W45 PETRI");
         assertTrue(plan.size() > 0);
