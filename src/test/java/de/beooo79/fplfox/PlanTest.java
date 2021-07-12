@@ -7,15 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import de.beooo79.fplfox.model.bo.flightplan.Airway;
 import de.beooo79.fplfox.model.bo.flightplan.Fix;
 import de.beooo79.fplfox.model.bo.flightplan.Plan;
 import de.beooo79.fplfox.model.bo.flightplan.RadioBeacon;
 import de.beooo79.fplfox.model.bo.flightplan.Segment;
 
-@SpringBootTest
+
 public class PlanTest {
 
     private Plan plan;
