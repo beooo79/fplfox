@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import de.beooo79.fplfox.model.bo.flightplan.Airway;
@@ -12,7 +16,6 @@ import de.beooo79.fplfox.model.bo.flightplan.Fix;
 import de.beooo79.fplfox.model.bo.flightplan.Plan;
 import de.beooo79.fplfox.model.bo.flightplan.RadioBeacon;
 import de.beooo79.fplfox.model.bo.flightplan.Segment;
-
 
 public class PlanTest {
 
@@ -149,4 +152,37 @@ public class PlanTest {
         assertFalse(plan.hasNext(new Fix("PETRI")));
     }
 
+    @Test
+    void testArraySum() {
+        List<Long> ar = List.of(1000000L, 20000000000L, 3000000000L, 40000000L, 50000L, 6000L, 700L);
+        assertFalse(ar.isEmpty());
+        assertEquals(28, ar.stream().mapToLong(Long::longValue).sum());
+    }
+
+    @Test
+    void compareTriplets() {
+        List<Integer> a = List.of(17, 28, 30);
+        List<Integer> b = List.of(99, 16, 8);
+
+        int sumA = 0;
+        int sumB = 0;
+
+        for (int i = 0; i < a.size(); i++) {
+            if (a.get(i) > b.get(i))
+                sumA++;
+            if (b.get(i) > a.get(i))
+                sumB++;
+        }
+
+        List<Integer> result = Arrays.asList(sumA, sumB);
+        assertFalse(result.isEmpty());
+        assertEquals(Arrays.asList(2, 1), result);
+    }
+
+    @Test
+    void parallelStream() {
+        List<Integer> a = IntStream.range(1, 10001).boxed().toList();
+        a.parallelStream().forEachOrdered(System.out::println);
+        assertNotNull(a);
+    }
 }
