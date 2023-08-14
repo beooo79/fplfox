@@ -134,7 +134,7 @@ public class Plan implements Serializable {
 		}
 
 		if (awy != null) {
-			aw = awy.getName();
+			aw = awy.name();
 		}
 
 		bf.append("waypoint." + i + "=, " + name + ", , " + name + ", " + type
@@ -153,7 +153,7 @@ public class Plan implements Serializable {
 			if (awy == null)
 				bf.append("DIRECT" + nl);
 			else
-				bf.append(awy.getName() + nl);
+				bf.append(awy.name() + nl);
 			bf.append(toPMDGFormat(f.getLat(), f.getLon()) + nl);
 			bf.append("0" + nl + "0" + nl + "0");
 		} else {
@@ -281,7 +281,7 @@ public class Plan implements Serializable {
 				// " in airway:" + a.getName() + " segments:" +
 				// segments.size());
 				for (AirwaySegment seg : segments) {
-					Fix f = seg.getFix();
+					Fix f = seg.fix();
 					fixes.add(f);
 					appendFs200xFixDetails(bf_fs200x, i, f, "I", a, null);
 					appendPMDGFixDetails(bf_pmdg_tmp, i, f, "I", a, null);

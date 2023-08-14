@@ -10,9 +10,6 @@ import java.util.HashMap;
 
 
 public class Airports implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6345887629236323018L;
 	private HashMap<String, Airport> airports;
 
@@ -53,7 +50,6 @@ public class Airports implements Serializable {
 		}
 		FoxMain.frame.out(airports.size() + " airports hashed, " + i
 				+ " lines read.");
-		//Benchmark.split("airports init");
 	}
 
 	public Airport get(String icao) {
