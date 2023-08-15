@@ -1,34 +1,22 @@
 package com.github.beooo79;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import lombok.Getter;
+import lombok.extern.java.Log;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
 
+@Log
+@Getter
 public class FoxProperties extends Properties {
-
-	/**
-	 * 
-	 */
+	@Serial
 	private static final long serialVersionUID = 2604523488977337387L;
 	public static String[] flightplans = new String[5];
 	private ArrayList<String> lastfpls;
-	private static File confFile = new File("fox.conf");
-	private static File fplFile = new File("fox-fpl.dat");
+	private static final File confFile = new File("fox.conf");
+	private static final File fplFile = new File("fox-fpl.dat");
 	private static FoxProperties instance;
-
-	public ArrayList<String> getLastfpls() {
-		return lastfpls;
-	}
-
-	public void setLastfpls(ArrayList<String> lastfpls) {
-		this.lastfpls = lastfpls;
-	}
 
 	public static FoxProperties getInstance() {
 		if (instance == null) {
@@ -43,23 +31,19 @@ public class FoxProperties extends Properties {
 	}
 
 	private void loadFPLs() {
-		lastfpls = new ArrayList<String>();
+		lastfpls = new ArrayList<>();
 		// read from file, if existent
 		if (fplFile.exists() && fplFile.isFile()) {
 			try {
 				BufferedReader r = new BufferedReader(new FileReader(fplFile));
-				String line = null;
-				System.out.println("Reading last fpls");
+				String line;
+				log.info("Reading last fpls");
 				while ((line = r.readLine()) != null) {
 					lastfpls.add(line);
 				}
 				r.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Exception ex) {
+				log.severe("loadFPLs failed "+ ex.getMessage());
 			}
 
 		}
@@ -75,12 +59,8 @@ public class FoxProperties extends Properties {
 			}
 			w.flush();
 			w.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception ex) {
+			log.severe("storeFPLs failed " + ex.getMessage());
 		}
 	}
 

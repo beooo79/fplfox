@@ -330,15 +330,9 @@ public class FoxFrame extends JFrame {
         // 4) if a possible next point on the airway increases distance, discard
         // it, path can be thrown away
 
+        // TODO
     }
 
-    protected void actionFallingRain() {
-        for (Plan plan : plans) {
-            if (plan != null) {
-                plan.browseFallingRain();
-            }
-        }
-    }
 
     protected void actionGoogleMaps() {
         mapPanel.initUI();
@@ -357,14 +351,14 @@ public class FoxFrame extends JFrame {
                 if (plan != null) {
 
                     // FS200x
-                    String filename = properties.getProperty("FS200x") + System.getProperty("file.separator") + plan.getAdep().getIcao() + plan.getAdes().getIcao() + "001.PLN";
+                    String filename = properties.getProperty("FS200x") + System.getProperty("file.separator") + plan.getAdep().icao() + plan.getAdes().icao() + "001.PLN";
                     FileWriter fw = new FileWriter(filename);
                     fw.write(plan.getFs200xString().toString());
                     fw.flush();
                     fw.close();
                     out("FS FPL export to " + filename + " finished.");
 
-                    filename = properties.getProperty("PMDG") + System.getProperty("file.separator") + plan.getAdep().getIcao() + plan.getAdes().getIcao() + ".rte";
+                    filename = properties.getProperty("PMDG") + System.getProperty("file.separator") + plan.getAdep().icao() + plan.getAdes().icao() + ".rte";
                     fw = new FileWriter(filename);
                     fw.write(plan.getPMDGRteString().toString());
                     fw.flush();

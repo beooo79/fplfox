@@ -1,58 +1,52 @@
 package com.github.beooo79.plan;
-import com.github.beooo79.FoxMain;
 
+import com.github.beooo79.FoxMain;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 
-
+@Log
 public class Airports implements Serializable {
-	private static final long serialVersionUID = -6345887629236323018L;
-	private HashMap<String, Airport> airports;
+  @Serial
+  private static final long serialVersionUID = -6345887629236323018L;
+  private final HashMap<String, Airport> airports;
 
-	public Airports() {
-		try {
-			this.airports = new HashMap<String, Airport>();
-			init();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+  public Airports() {
+    this.airports = new HashMap<>();
+    init();
+  }
 
-	private void init() throws IOException {
-		FileReader fr = new FileReader(FoxMain.NAVDATA_APTS);
-		BufferedReader br = new BufferedReader(fr);
-		String line = null;
-		int i = 0;
-		while ((line = br.readLine()) != null) {
-			i++;
-			//line = line.trim();
-			if (line.length() > 0) {
-				if (!line.startsWith(";")) {
-					try {
-						airports.put(line.substring(0, 4).trim(), new Airport(
-								line));
-					} catch (NumberFormatException ne) {
-						System.err.println("unable to parse integer:" + line);
-					} catch (Exception e) {
-						// e.printStackTrace();
-						System.err.println("unable to parse:" + line);
-					}
-				}
-			}
-		}
-		FoxMain.frame.out(airports.size() + " airports hashed, " + i
-				+ " lines read.");
-	}
+  @SneakyThrows
+  private void init() {
+    FileReader fr = new FileReader(FoxMain.NAVDATA_APTS);
+    BufferedReader br = new BufferedReader(fr);
+    String line;
+    int i = 0;
+    while ((line = br.readLine()) != null) {
+      i++;
+      if (!line.isEmpty()) {
+        if (!line.startsWith(";")) {
+          try {
+            var icao = line.substring(0, 4);
+            var lat = Float.parseFloat(line.substring(4, 14));
+            var lon = Float.parseFloat(line.substring(14, 25));
+            airports.put(line.substring(0, 4).trim(), new Airport(icao, icao, lat, lon));
+          } catch (NumberFormatException ne) {
+            log.warning("unable to parse integer:" + line);
+          } catch (Exception e) {
+            log.warning("unable to parse:" + line);
+          }
+        }
+      }
+    }
+    FoxMain.frame.out(airports.size() + " airports hashed, " + i + " lines read.");
+  }
 
-	public Airport get(String icao) {
-		return airports.get(icao);
-	}
+  public Airport get(String icao) {
+    return airports.get(icao);
+  }
 }
