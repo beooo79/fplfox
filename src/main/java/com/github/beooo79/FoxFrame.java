@@ -148,7 +148,8 @@ public class FoxFrame extends JFrame {
             area.setFont(FONT3);
         }
 
-        JButton[] cmdFPL = new JButton[]{new FPLActionButton(0, textFPL, this), new FPLActionButton(1, textFPL, this), new FPLActionButton(2, textFPL, this), new FPLActionButton(3, textFPL, this), new FPLActionButton(4, textFPL, this)};
+        JButton[] cmdFPL = new JButton[]{new FPLActionButton(textFPL[0]), 
+            new FPLActionButton(textFPL[1]), new FPLActionButton(textFPL[2]), new FPLActionButton(textFPL[3]), new FPLActionButton(textFPL[4])};
 
         // fplScroll = new JScrollPane(textFPL);
         fplPanel.add(new JLabel("Input Routes - Format: <ADEP>   [SID|DCT]   <FPL ROUTE>   [STAR|DCT]   <ADES>"), "0, 0, 1, 0");
@@ -313,9 +314,8 @@ public class FoxFrame extends JFrame {
 
     protected void autoRoute(String ADEP, String ADES) {
         // list of suitable! SID exit points @ADEP
-        ap.get(ADEP.trim()).getListOfSIDExitPoints();
+
         // list of suitable! STAR entry points @ADES
-        ap.get(ADES.trim()).getListOfSTAREntryPoints();
 
         // Keep track of all distances covered by paths
         // dispose of any path which adds huge distance in relation to the
@@ -437,22 +437,16 @@ public class FoxFrame extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 buttonRead.setEnabled(true);
                 try {
-                    BufferedReader fr = new BufferedReader(new FileReader(FoxMain.PATH_NAVDATA + System.getProperty("file.separator") + "cycle_info.txt"));
-                    String cycle = fr.readLine();
-                    myself.setTitle(FoxMain.VERSION + "    " + cycle);
+                    try (BufferedReader fr = new BufferedReader(new FileReader(FoxMain.PATH_NAVDATA + System.getProperty("file.separator") + "cycle_info.txt"))) {
+                        String cycle = fr.readLine();
+                        myself.setTitle(FoxMain.VERSION + "    " + cycle);
+                    }
                 } catch (Exception ex) {
                     log.severe("init failed: " + ex.getMessage());
                 }
             });
         });
         t.start();
-    }
-
-    public Fix promptFix(Fix lastFix, List<Fix> fixess) {
-        for (Fix a : fixess) {
-            a.setNextFix(lastFix);
-        }
-        return (Fix) JOptionPane.showInputDialog(this, "Select desired fix", "Multiple Fixes available:", JOptionPane.PLAIN_MESSAGE, null, fixess.toArray(), fixess.get(0));
     }
 
     private void handleErrorOnAutoRouteText(String text, final int requiredSize) {

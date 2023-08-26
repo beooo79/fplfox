@@ -9,35 +9,23 @@ import javax.swing.JTextArea;
 
 public class FPLActionButton extends JButton
 {
-
-	private int index;
 	private JTextArea textFPL;
-	private FoxFrame foxFrame;
 
-	public FPLActionButton(int i, JTextArea[] textFPL, FoxFrame foxFrame)
+	public FPLActionButton(JTextArea textFPL)
 	{
-		this.index = i;
-		this.textFPL = textFPL[i];
-		this.foxFrame = foxFrame;
+		this.textFPL = textFPL;
 		this.setText("FPL");
 		setAction(new AbstractAction("FPL")
 			{
-
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 6106478438991937765L;
-
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
 					actionFPL(arg0);
-
 				}
 			});
 	}
 
-	public void actionFPL(ActionEvent e)
+	private void actionFPL(ActionEvent e)
 	{
 		final JPopupMenu m = new JPopupMenu("Available FPL");
 		for (final String s : FoxProperties.getInstance().getLastfpls())

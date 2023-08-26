@@ -4,27 +4,19 @@ import com.github.beooo79.FoxMain;
 import java.awt.*;
 import java.io.Serial;
 import java.io.Serializable;
-import java.net.URI;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import lombok.Getter;
 import lombok.extern.java.Log;
 
 @Log
 @Getter
 public class Plan implements Serializable {
-  public static Color DARK_GREEN = new Color(0, 100, 0);
-  public static Color SLATE_GRAY = new Color(112, 128, 144);
-  @Serial
-  private static final long serialVersionUID = 8966967712210168137L;
+  public static final Color DARK_GREEN = new Color(0, 100, 0);
+  public static final Color SLATE_GRAY = new Color(112, 128, 144);
 
-  private static String getDegrees(int s, float num) {
-    return String.format("%0" + s + "d", (int) Math.abs(num));
-  }
+  @Serial private static final long serialVersionUID = 8966967712210168137L;
 
   public static String[] toFSFormat(float lat, float lon) {
     String[] gps = new String[2];
@@ -41,15 +33,9 @@ public class Plan implements Serializable {
 
     float lat1 = Math.abs(lat) - (int) Math.abs(lat);
     float minLat = lat1 * 60;
-    // FoxMain.getFrame().sysout(lat + "->" + getDegrees(2, lat) + " Rest:"
-    // + lat1
-    // + " =" + minLat + "'");
-
     float lon1 = Math.abs(lon) - (int) Math.abs(lon);
     float minLon = lon1 * 60;
-    // FoxMain.getFrame().sysout(lon + "->" + getDegrees(3, lon) + " Rest:"
-    // + lon1
-    // + " =" + minLon + "'");
+
     if (minLat < 10) {
       gps[0] += String.format("%02d* %05.3g'", (int) Math.abs(lat), minLat);
     } else {
@@ -80,21 +66,18 @@ public class Plan implements Serializable {
     return String.format("1 %S %8.4f %S %8.4f 0", gps[0], Math.abs(lat), gps[1], Math.abs(lon));
   }
 
-  private String adep_raw;
-
-  private String ades_raw;
-  private String rte_raw;
-  private List<String> url = new ArrayList<>();
-  private boolean SHORT = false;
+  private final String adep_raw;
+  private final String ades_raw;
+  private final String rte_raw;
+  private final List<String> url = new ArrayList<>();
+  private final boolean SHORT = false;
   private StringBuffer fs200xString;
   private Airport adep;
   private Airport ades;
   private ArrayList<Fix> fixes;
-
   private StringBuffer pmdgString;
 
   public static String nl = System.getProperty("line.separator");
-
   public static String nl2 =
       System.getProperty("line.separator") + System.getProperty("line.separator");
 
@@ -102,19 +85,19 @@ public class Plan implements Serializable {
     this.adep_raw = adep.toUpperCase();
     this.ades_raw = ades.toUpperCase();
     this.rte_raw = fpl.toUpperCase();
-    this.fixes = new ArrayList<Fix>();
+    this.fixes = new ArrayList<>();
   }
 
   // for fixes
   private void appendFs200xFixDetails(
       StringBuffer bf, int i, Fix f, String type, Airway awy, Airport apt) {
     if (SHORT) {
-      bf.append(f.getId() + " ");
+      bf.append(f.getId()).append(" ");
       return;
     }
 
-    String[] gps = null;
-    String name = "";
+    String[] gps;
+    String name;
     String aw = "";
 
     if (apt != null) {
@@ -131,46 +114,47 @@ public class Plan implements Serializable {
       aw = awy.name();
     }
 
-    bf.append(
-        "waypoint."
-            + i
-            + "=, "
-            + name
-            + ", , "
-            + name
-            + ", "
-            + type
-            + ", "
-            + gps[0]
-            + ", "
-            + gps[1]
-            + ", +000000, "
-            + aw);
-    bf.append(nl);
+    bf.append("waypoint.")
+        .append(i)
+        .append("=, ")
+        .append(name)
+        .append(", , ")
+        .append(name)
+        .append(", ")
+        .append(type)
+        .append(", ")
+        .append(gps[0])
+        .append(", ")
+        .append(gps[1])
+        .append(", +000000, ")
+        .append(aw)
+        .append(nl);
   }
 
   // for fixes
   private void appendPMDGFixDetails(
-      StringBuffer bf, int i, Fix f, String type, Airway awy, Airport apt) {
-    if (apt == null && f != null) {
+      StringBuffer stringBuffer, Fix fix, String type, Airway awy, Airport apt) {
+    if (apt == null && fix != null) {
       // Intersection,VOR,NDB
-      bf.append(f.getId()).append(nl);
-      bf.append("5").append(nl);
-      if (awy == null) bf.append("DIRECT").append(nl);
-      else bf.append(awy.name()).append(nl);
-      bf.append(toPMDGFormat(f.getLat(), f.getLon())).append(nl);
-      bf.append("0").append(nl).append("0").append(nl).append("0");
+      stringBuffer.append(fix.getId()).append(nl);
+      stringBuffer.append("5").append(nl);
+      if (awy == null) stringBuffer.append("DIRECT").append(nl);
+      else stringBuffer.append(awy.name()).append(nl);
+      stringBuffer.append(toPMDGFormat(fix.getLat(), fix.getLon())).append(nl);
+      stringBuffer.append("0").append(nl).append("0").append(nl).append("0");
     } else {
       // Airport
-      bf.append(apt.icao()).append(nl);
-      bf.append("1").append(nl);
-      if (type.equals("DEP")) bf.append("DIRECT").append(nl);
-      else bf.append("-").append(nl);
-      bf.append(toPMDGFormat(apt.lat(), apt.lon())).append(nl);
-      bf.append("-----").append(nl);
-      if (type.equals("DEP")) bf.append("1").append(nl);
-      else bf.append("0").append(nl);
-      bf.append("0")
+      assert apt != null;
+      stringBuffer.append(apt.icao()).append(nl);
+      stringBuffer.append("1").append(nl);
+      if (type.equals("DEP")) stringBuffer.append("DIRECT").append(nl);
+      else stringBuffer.append("-").append(nl);
+      stringBuffer.append(toPMDGFormat(apt.lat(), apt.lon())).append(nl);
+      stringBuffer.append("-----").append(nl);
+      if (type.equals("DEP")) stringBuffer.append("1").append(nl);
+      else stringBuffer.append("0").append(nl);
+      stringBuffer
+          .append("0")
           .append(nl)
           .append(nl)
           .append("1")
@@ -183,7 +167,7 @@ public class Plan implements Serializable {
           .append(nl)
           .append("-1000000");
     }
-    bf.append(nl2);
+    stringBuffer.append(nl2);
   }
 
   public void build(Airways awys, Airports apts) {
@@ -212,18 +196,23 @@ public class Plan implements Serializable {
     ades = apts.get(this.ades_raw.trim());
 
     // System.out.println("" + this.adep_raw + " -> " + this.ades_raw);
-    bf_fs200x.append("departure_id=").append(adep.toFS200xString());
-    bf_fs200x.append(nl);
-    bf_fs200x.append("destination_id=").append(ades.toFS200xString());
-    bf_fs200x.append(nl);
-    bf_fs200x.append("departure_name=").append(adep.name());
-    bf_fs200x.append(nl);
-    bf_fs200x.append("destination_name=").append(ades.name());
-    bf_fs200x.append(nl);
+    bf_fs200x
+        .append("departure_id=")
+        .append(adep.toFS200xString())
+        .append(nl)
+        .append("destination_id=")
+        .append(ades.toFS200xString())
+        .append(nl)
+        .append("departure_name=")
+        .append(adep.name())
+        .append(nl)
+        .append("destination_name=")
+        .append(ades.name())
+        .append(nl);
 
     // waypoints
     appendFs200xFixDetails(bf_fs200x, 0, null, "A", null, apts.get(this.adep_raw));
-    appendPMDGFixDetails(bf_pmdg_tmp, 0, null, "DEP", null, apts.get(this.adep_raw));
+    appendPMDGFixDetails(bf_pmdg_tmp, null, "DEP", null, apts.get(this.adep_raw));
 
     StringTokenizer st = new StringTokenizer(rte_raw.trim());
     Fix lastFix = adep.toFix();
@@ -233,13 +222,10 @@ public class Plan implements Serializable {
       String p = st.nextToken();
       // identify if airway or fix
 
-      if (p.trim().equals("DCT") || p.trim().equals("SID") || p.trim().equals("STAR")) {
-        // disregard DCT/STAR/SID ... continue, next should be fix or
-        // airport!
-      } else if (isFix(p, awys)) {
+      if (isFix(p, awys)) {
         List<Fix> f = awys.getFixes().get(p.trim());
         if (f != null) {
-          Fix choice = null;
+          Fix choice;
           if (f.size() == 1) choice = f.get(0);
           else {
             // get nearest
@@ -249,7 +235,7 @@ public class Plan implements Serializable {
           }
           fixes.add(choice);
           appendFs200xFixDetails(bf_fs200x, i, choice, "I", null, null);
-          appendPMDGFixDetails(bf_pmdg_tmp, i, choice, "I", null, null);
+          appendPMDGFixDetails(bf_pmdg_tmp, choice, "I", null, null);
           i++;
           choice.setNextFix(lastFix);
           lastFix = choice;
@@ -267,14 +253,14 @@ public class Plan implements Serializable {
           Fix f = seg.fix();
           fixes.add(f);
           appendFs200xFixDetails(bf_fs200x, i, f, "I", a, null);
-          appendPMDGFixDetails(bf_pmdg_tmp, i, f, "I", a, null);
+          appendPMDGFixDetails(bf_pmdg_tmp, f, "I", a, null);
           i++;
           lastFix = f;
         }
       }
     }
     appendFs200xFixDetails(bf_fs200x, i, null, "A", null, apts.get(this.ades_raw));
-    appendPMDGFixDetails(bf_pmdg_tmp, i, null, "DES", null, apts.get(this.ades_raw));
+    appendPMDGFixDetails(bf_pmdg_tmp, null, "DES", null, apts.get(this.ades_raw));
     FoxMain.frame.out(fixes.size() + " enroute fixes found   =====>");
     this.fs200xString = bf_fs200x;
 
@@ -327,8 +313,6 @@ public class Plan implements Serializable {
     fades.setNextFix(lastFix);
     distance += fades.getDistanceToNextFix();
     out(fades.toString());
-    NumberFormat nf = new DecimalFormat("0.00");
-
     out(
         String.format(
             "%6s     %07.2f | %07.2f       %5fnm       %6s   %s",
